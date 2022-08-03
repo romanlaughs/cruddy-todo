@@ -74,14 +74,32 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+
+  var idDotTxt = id.concat('.txt');
+  var filePath = path.join(exports.dataDir, idDotTxt);
+  fs.readFile(filePath, 'utf8', (err, currentText) => {
+    if (err) {
+      callback('Error', currentText);
+    } else {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Delete Error: ', err);
+        } else {
+          callback(null, { id });
+        }
+      });
+    }
+  });
+
+
+  // var item = items[id];
+  // delete items[id];
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  // }
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
