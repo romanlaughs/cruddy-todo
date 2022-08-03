@@ -52,18 +52,25 @@ exports.readOne = (id, callback) => {
     } else {
       callback(null, { id, text });
     }
-
   });
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  var idDotTxt = id.concat('.txt');
+  var filePath = path.join(exports.dataDir, idDotTxt);
+  fs.readFile(filePath, 'utf8', (err, currentText) => {
+    if (err) {
+      callback('Error', currentText);
+    } else {
+      fs.writeFile(filePath, text, (err) => {
+        if (err) {
+          console.error('Write Error: ', err);
+        } else {
+          callback(null, { id, text });
+        }
+      });
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
