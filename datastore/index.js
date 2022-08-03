@@ -27,16 +27,20 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    console.log({ id, text });
-    return { id, text };
-  });
-  // var directory = fs.readdirSync(exports.dataDir);
-  // console.log(items[0]);
-  // var files = _.map(directory, (text, id) => {
-  //   return {id, text};
+  // var data = _.map(items, (text, id) => {
+  //   console.log({ id, text });
+  //   return { id, text };
   // });
-  callback(null, data);
+  var directory = fs.readdirSync(exports.dataDir);
+  var files = [];
+  for (var i = 0; i < directory.length; i++) {
+    var container = {};
+    var noDotTxt = directory[i].split('.');
+    container.id = noDotTxt[0];
+    container.text = noDotTxt[0];
+    files.push(container);
+  }
+  callback(null, files);
 };
 
 exports.readOne = (id, callback) => {
