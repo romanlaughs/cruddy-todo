@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
+const indexBack = require('./index.js');
+var Promise = require('bluebird');
 
 var counter = 0;
 
@@ -55,3 +57,26 @@ exports.getNextUniqueId = (callback) => {
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
 
 exports.counterFile = path.join(__dirname, 'counter.txt');
+
+exports.eachFile = (input) => {
+  var allFiles = [];
+  console.log('ARRAY TEST ', input);
+  var promiseReadFile = Promise.promisify(fs.readFile);
+  input.forEach(file => {
+    var id = file.split('.');
+    fs.readFile(path.join(indexBack.dataDir, file), 'utf8', (err, text) => {
+      if (err) {
+        console.log('Error ', err);
+      } else {
+        console.log('Im Pushing Files');
+        allFiles.push({ id: id[0], text: text });
+      }
+      console.log('I DIDNT STOP AFTER IF/ELSE');
+    });
+    console.log('I DIDNT STOP AFTER READFILE');
+  });
+  if (allFiles.length > 1) {
+    console.log('I DIDNT STOP AFTER RETURN');
+    return allFiles;
+  }
+};
